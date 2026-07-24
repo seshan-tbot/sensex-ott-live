@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sensex OTT — Live (read-only)</title>
+<link rel="stylesheet" href="static/dashboard.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="dot" id="run-dot"></span>
+      <h1>Sensex OTT</h1>
+      <span class="badge" id="mode-badge">—</span>
+    </div>
+    <div class="controls">
+      <span class="muted" id="readonly-note">Read-only mirror — updates about once a minute</span>
+    </div>
+  </header>
+
+  <nav class="tabbar">
+    <button class="tab-btn active" data-tab="charts">Charts</button>
+    <button class="tab-btn" data-tab="history">Trade History</button>
+    <button class="tab-btn" data-tab="recap">Day Recap</button>
+  </nav>
+
+  <main class="grid" id="tab-charts">
+    <section class="charts">
+      <div class="chart-card">
+        <div class="chart-head">
+          <h2>CE <span id="ce-strike" class="strike"></span></h2>
+          <span id="ce-state" class="state-pill state-flat">FLAT</span>
+        </div>
+        <div id="ce-chart" class="chart"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-head">
+          <h2>PE <span id="pe-strike" class="strike"></span></h2>
+          <span id="pe-state" class="state-pill state-flat">FLAT</span>
+        </div>
+        <div id="pe-chart" class="chart"></div>
+      </div>
+    </section>
+
+    <aside class="sidebar">
+      <div class="card">
+        <h3>Session</h3>
+        <div class="kv"><span>Spot</span><span id="spot-val">—</span></div>
+        <div class="kv"><span>Prev Close</span><span id="prevclose-val">—</span></div>
+        <div class="kv"><span>Change</span><span id="change-val">—</span></div>
+        <div class="kv"><span>Feed</span><span id="ws-val">—</span></div>
+        <div class="kv"><span>Updated</span><span id="updated-val">—</span></div>
+      </div>
+
+      <div class="card">
+        <h3>Filters</h3>
+        <div class="kv"><span>Chop-window block</span><span id="chop-filter-val">—</span></div>
+        <div class="kv"><span>Directional-bias lock</span><span id="bias-filter-val">—</span></div>
+        <div class="kv"><span>Gap</span><span id="bias-gap-val">—</span></div>
+        <div class="kv"><span>Breakout</span><span id="bias-breakout-val">—</span></div>
+        <div class="kv"><span>Allowed leg</span><span id="bias-allowed-val">—</span></div>
+      </div>
+
+      <div class="card">
+        <h3>Position</h3>
+        <div id="position-empty" class="muted">No open position</div>
+        <div id="position-box" class="hidden">
+          <div class="kv"><span>Leg</span><span id="pos-leg">—</span></div>
+          <div class="kv"><span>Entry</span><span id="pos-entry">—</span></div>
+          <div class="kv"><span>Stop</span><span id="pos-stop">—</span></div>
+          <div class="kv"><span>Live P&amp;L</span><span id="pos-pnl">—</span></div>
+        </div>
+        <div class="kv total"><span>Day P&amp;L (realized)</span><span id="day-pnl">₹0</span></div>
+      </div>
+
+      <div class="card grow">
+        <div class="card-head">
+          <h3>Signals</h3>
+          <button class="expand-btn" data-expand="signal-feed" data-title="Signals" title="Expand">⤢</button>
+        </div>
+        <div id="signal-feed" class="feed"></div>
+      </div>
+    </aside>
+  </main>
+
+  <main class="grid-logs hidden" id="tab-history">
+    <section class="logs card">
+      <div class="log-head">
+        <h3>Trade History</h3>
+        <div class="history-summary" id="history-summary"></div>
+      </div>
+      <div class="table-wrap">
+        <table class="trade-table">
+          <thead>
+            <tr>
+              <th>Leg</th><th>Strike</th><th class="sortable" data-sort="entryTs">Entry Time<span class="sort-arrow"></span></th><th>Entry</th><th>Exit Time</th><th>Exit</th>
+              <th>Stop</th><th>Qty</th><th>Reason</th><th>Points</th><th class="sortable" data-sort="pnl">P&amp;L<span class="sort-arrow"></span></th>
+            </tr>
+          </thead>
+          <tbody id="trade-history-body"></tbody>
+        </table>
+        <div id="trade-history-empty" class="muted">No completed trades yet today.</div>
+      </div>
+    </section>
+  </main>
+
+  <main class="grid hidden" id="tab-recap">
+    <section class="charts">
+      <div class="chart-card">
+        <div class="chart-head">
+          <h2>CE <span id="recap-ce-strike" class="strike"></span></h2>
+        </div>
+        <div id="recap-ce-chart" class="chart"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-head">
+          <h2>PE <span id="recap-pe-strike" class="strike"></span></h2>
+        </div>
+        <div id="recap-pe-chart" class="chart"></div>
+      </div>
+    </section>
+
+    <aside class="sidebar">
+      <div class="card">
+        <h3>Day</h3>
+        <select id="recap-day-select" class="day-select"></select>
+        <div class="kv"><span>Spot (open)</span><span id="recap-spot-val">—</span></div>
+        <div class="kv"><span>Prev Close</span><span id="recap-prevclose-val">—</span></div>
+        <div class="kv"><span>Expiry</span><span id="recap-expiry-val">—</span></div>
+      </div>
+
+      <div class="card">
+        <h3>Day Summary</h3>
+        <div class="history-summary" id="recap-summary"></div>
+      </div>
+
+      <div class="card grow">
+        <div class="card-head">
+          <h3>Trades</h3>
+          <button class="expand-btn" data-expand="recap-trade-wrap" data-title="Trades" title="Expand">⤢</button>
+        </div>
+        <div class="table-wrap" id="recap-trade-wrap">
+          <table class="trade-table">
+            <thead>
+              <tr><th>Leg</th><th>Strike</th><th>Entry Time</th><th>Entry</th><th>Exit Time</th><th>Exit</th>
+                  <th>Stop</th><th>Reason</th><th>Points</th></tr>
+            </thead>
+            <tbody id="recap-trade-body"></tbody>
+          </table>
+          <div id="recap-trade-empty" class="muted">No trades that day.</div>
+        </div>
+      </div>
+
+      <div class="card grow">
+        <div class="card-head">
+          <h3>Signals</h3>
+          <button class="expand-btn" data-expand="recap-signal-feed" data-title="Signals" title="Expand">⤢</button>
+        </div>
+        <div id="recap-signal-feed" class="feed"></div>
+      </div>
+    </aside>
+  </main>
+
+  <div id="expand-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-head">
+        <h3 id="modal-title"></h3>
+        <button id="modal-close" class="btn btn-ghost">✕ Close</button>
+      </div>
+      <div id="modal-body" class="modal-body"></div>
+    </div>
+  </div>
+
+  <script src="static/lightweight-charts.js"></script>
+  <script src="static/dashboard.js"></script>
+</body>
+</html>
