@@ -1,0 +1,6 @@
+Airtel Static IP Tracking
+25th Sept: 223.178.68.134
+28th Sept: 122.164.9.151
+29th Sept: 122.164.9.151
+
+09 oct: 136.185.2.128
